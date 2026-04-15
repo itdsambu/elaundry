@@ -1,0 +1,38 @@
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: elaundry-nginx
+    restart: always                        # ← auto restart jika server reboot
+    ports:
+      - "80:80"                            # ← production pakai port 80
+    volumes:
+      - ./src/elaundry:/var/www/html/elaundry
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app83
+    networks:
+      - appnet
+
+  app83:
+    build:
+      context: .
+      dockerfile: ./docker/php83/Dockerfile
+    container_name: elaundry-php83
+    restart: always
+    working_dir: /var/www/html/elaundry
+    volumes:
+      - ./src/elaundry:/var/www/html/elaundry
+      - ./docker/php83/php.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
+    environment:
+      TZ: Asia/Jakarta
+      DB_HOST: ${DB_HOST}                  # ← ambil dari .env.prod
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME_1: ${DB_NAME_1}
+      DB_NAME_2: ${DB_NAME_2}
+    networks:
+      - appnet
+
+networks:
+  appnet:
