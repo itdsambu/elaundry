@@ -1,0 +1,97 @@
+<script src="<?php echo base_url();?>assets/jQuery/jquery-3.2.1.min.js" type="text/javascript"></script>
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption font-dark">
+                        <i class="fa fa-th-list"></i>
+                        <span class="caption-subject bold uppercase"> Management Group User</span>
+                    </div>
+                    <div class="tools">
+                        <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                        <a href="javascript:;" class="fullscreen" data-original-title="" title=""> </a>
+                        <a href="javascript:;" class="remove" data-original-title="" title=""> </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <!-- alert -->
+                    <?php if($this->input->get('msg') == "success"){
+                        echo "<div class='alert alert-success'>";
+                        echo "<strong>Sukses !!!</strong> Data berhasil disimpan.";
+                        echo "</div>";
+                    }elseif($this->input->get('msg') == "failed"){
+                        echo "<div class='alert alert-danger'>";
+                        echo "<strong>Gagal !!!</strong> Data tidak dapat disimpan.";
+                        echo "</div>";
+                    } ?>
+
+                    <div class="table-toolbar">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="btn-group pull-right">
+                                    <a href="<?php echo site_url('Groupuser/input') ?>" class="btn green">
+                                        Tambah Data <i class="fa fa-plus-square"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-striped table-bordered table-hover" id="table">
+                        <thead>
+                            <tr>
+                                <th>Group Name</th>
+                                <th>Created Date</th>
+                                <th>Updated Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($getData as $get): ?>
+                                <tr>
+                                    <td><?php echo $get->GroupName ?></td>
+                                    <td><?php if($get->CreatedDate!=NULL){echo date('d M Y', strtotime($get->CreatedDate));} ?></td>
+                                    <td><?php if($get->UpdatedDate!=NULL){echo date('d M Y', strtotime($get->UpdatedDate));} ?></td>
+                                    <td class="text-center">
+                                        <a href="<?php echo site_url('Groupuser/update')."/".$get->GroupID; ?>" class="btn btn-icon-only blue" title="Edit"><i class="fa fa-edit"></i></a>
+                                        
+                                        <a href="<?php echo site_url('Groupuser/delete')."/".$get->GroupID; ?>" class="btn btn-icon-only red" title="Hapus" onClick="return confirm('Hapus <?php echo $get->GroupName;?> ?')"><i class="fa fa-trash"></i></a>
+
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#table').dataTable({
+            "order"      : [0, 'asc'],
+            "lengthMenu" : [
+                            [5, 10, 15, 20, -1],
+                            [5, 10, 15, 20, "All"] // change per page values here
+                           ],
+            "pageLength" : 10
+        });
+    } );
+
+    $('[data-confirm-button-act=ya]').on(ace.click_event, function() {
+        var id = $(this).data('id');
+        alert(id);
+        // var name = $(this).data('name');
+        // bootbox.confirm("Apakah anda yakin untuk menghapus jabatan "+name+" ?", function(result) {
+        //     if(result) {
+        //         window.location='deleteJabatan?id='+id;
+        //     }
+        // });
+    });
+</script>

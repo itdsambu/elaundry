@@ -1,0 +1,76 @@
+<div class="page-content">
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption font-dark">
+                        <i class="fa fa-list"></i>
+                        <span class="caption-subject bold uppercase"> Edit Suplier</span>
+                    </div>
+                    <div class="tools">
+                        <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                        <a href="javascript:;" class="fullscreen" data-original-title="" title=""> </a>
+                        <a href="javascript:;" class="remove" data-original-title="" title=""> </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <form class="form-horizontal" role="form" method="post" action="<?php echo base_url('Master_kategori/updateData')?>">
+                        <div class="form-body">
+                            <div class="row">
+                                <?php foreach($getData as $get){?>
+                                <div class="col-lg-12">
+                                    <input type="hidden" name="txtKategoriId" id="kategoriid" class="form-control" value="<?php echo $get->kategoriID?>">
+                                    <div class="form-group">
+                                        <label class="col-lg-1 control-label">Kategori</label>
+                                        <div class="col-lg-3">
+                                            <input type="text" name="txtNamaKategori" id="kategori" class="form-control" value="<?php echo $get->nama_kategori?>">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-1 control-label">Satuan</label>
+                                        <div class="col-lg-3">
+                                        <?php if($get->status == 0){?>
+                                           <div class="mt-radio-inline">
+                                                <label class="mt-radio">
+                                                    <input type="radio" name="txtStatus" id="status" value="0" checked> Aktif
+                                                    <span></span>
+                                                </label>
+                                                <label class="mt-radio">
+                                                    <input type="radio" name="txtStatus" id="status" value="1"> Not Aktif
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        <?php }else{?>
+                                             <div class="mt-radio-inline">
+                                                <label class="mt-radio">
+                                                    <input type="radio" name="txtStatus" id="status" value="0"> Aktif
+                                                    <span></span>
+                                                </label>
+                                                <label class="mt-radio">
+                                                    <input type="radio" name="txtStatus" id="status" value="1" checked> Not Aktif
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        <?php }?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-lg-offset-2 col-lg-10">
+                                    <button type="submit" class="btn green">Submit</button>
+                                    <a class="btn default" href="javascript:history.back()">Kembali</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+</div>

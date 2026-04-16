@@ -1,0 +1,1 @@
+<input type="text" class="form-control" id="txthargaside" name="txthargaside" value="<?php foreach($tinta as $row){echo $row->Harga_perside;}?>">

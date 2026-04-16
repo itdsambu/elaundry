@@ -1,0 +1,30 @@
+thead
+{
+	display: table-header-group;
+	background-color: darkblue;
+	color: white;
+}
+th
+{
+	text-align: center;
+	vertical-align: middle;
+}
+input
+{
+	width: 70px;
+	background-color: transparent;
+	vertical-align: middle;
+}
+td, input
+{
+	border-style: none;
+	text-align: right;
+}
+#kiri
+{
+	text-align: left;
+}
+#tengah
+{
+	text-align: middle;
+}

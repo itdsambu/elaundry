@@ -1,0 +1,301 @@
+<?php $bulan = array(1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'); ?>
+<script src="<?php echo base_url(); ?>assets/jQuery/jquery-3.2.1.min.js" type="text/javascript"></script>
+<div class="page-content">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <form class="form-horizontal" role="form" method="post" action="<?php echo base_url('Approval_laundry/approveTrnLaundry') ?>">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption font-dark">
+                            <i class="fa fa-list"></i>
+                            <span class="caption-subject bold uppercase">APPROVAL LAUNDRY</span>
+                        </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                            <a href="javascript:;" class="fullscreen" data-original-title="" title=""> </a>
+                            <a href="javascript:;" class="remove" data-original-title="" title=""> </a>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <!-- alert -->
+                        <?php if (isset($alert)) {
+                            echo "<div class='alert alert-success'>";
+                            echo "<strong>Sukses !!!</strong>" . $alert;
+                            echo "</div>";
+                        } ?>
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="col-lg-2 col-md-2 col-sm-3 col-xs-12 control-label">Status Tenaga Kerja</label>
+                                        <div class="col-lg-4 col-md-8 col-sm-9 col-xs-12" style="padding-top: 9px;">
+                                            <div class="col-lg-4 col-md-4 col-sm-5 col-xs-5 form-check">
+                                                <input type="radio" name="StatusTK" value="1" class="form-check-input StatusTK" id="karyawan" <?php if (isset($status_tk)) { if ($status_tk == '1') { echo 'checked'; } } ?>>
+                                                <label class="form-check-label" for="Karyawan">Karyawan</label>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-7 col-xs-7">
+                                                <input type="radio" name="StatusTK" value="2" class="form-check-input StatusTK" id="harian" <?php if (isset($status_tk)) { if ($status_tk == '2') { echo 'checked'; } } ?>>
+                                                <label class="form-check-label" for="Borongan">Harian/Borongan</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label">Periode</label>
+                                        <div class="col-lg-3">
+                                            <select class="form-control" name="txtPeriode" id="periode" required <?php if (isset($periode)) { } else { echo 'disabled'; } ?>>
+                                                <option value="" class="kosong">Pilih Status Tenaga Kerja Terlebih Dahulu</option>
+                                                <option value="p1" class="harian" <?php if (isset($periode)) { if ($periode == 'p1') { echo 'selected'; } else { echo 'style="display: none;"'; } } ?>>Periode I</option>
+                                                <option value="p2" class="harian" <?php if (isset($periode)) { if ($periode == 'p2') { echo 'selected'; } else { echo 'style="display: none;"'; } } ?>>Periode II</option>
+                                                <option value="bulanan" class="karyawan" <?php if (isset($periode)) { if ($periode == 'bulanan') { echo 'selected'; } else { echo 'style="display: none;"'; } } ?>>Bulanan</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label">Bulan</label>
+                                        <div class="col-lg-3">
+                                            <select class="form-control" id="bulan" name="txtbulan">
+                                                <option value="">--Pilih--</option>
+                                                <?php for ($i = 1; $i <= 12; $i++) { ?>
+                                                    <option value="<?= $i ?>" <?php if (isset($bln)) { if ($bln == $i) { echo 'selected'; } } ?>><?= $bulan[$i]; ?></option>
+                                                    <?php
+                                                } ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label">Tahun</label>
+                                        <div class="col-lg-3">
+                                            <select class="form-control" name="txttahun" id="tahun">
+                                                <?php for ($i = date('Y') - 2; $i <= (date('Y')); $i++) {
+                                                    if ($i == date('Y')) { ?>
+                                                        <option value="<?php echo $i; ?>" selected><?= $i; ?></option>
+                                                        <?php 
+                                                    } else { ?>
+                                                        <option value="<?php echo $i; ?>" <?php if (isset($tahun)) { if ($tahun == $i) { echo 'selected'; } } ?>><?= $i; ?></option>
+                                                        <?php 
+                                                    }
+                                                } ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-lg-offset-2 col-lg-10">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="callAjaxx()">Refresh</button>
+                                    <a class="btn btn-sm default" href="javascript:history.back()">Kembali</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                            <a href="javascript:;" class="fullscreen" data-original-title="" title=""> </a>
+                            <a href="javascript:;" class="remove" data-original-title="" title=""> </a>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="table-responsive table-freeze" id="scrolling_table_2" style="max-height: 500px;">
+                            <table class="table table-striped table-bordered table-hover" id="tabeldata2">
+                                <thead>
+                                    <tr class="bg-primary">
+                                        <th class="fixed freeze text-center bg-primary" rowspan="2">
+                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                <input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes" onchange="checkAll(this)">
+                                                <span></span>
+                                            </label>
+                                        </th>
+                                        <th class="fixed freeze text-center bg-primary" rowspan="2">Lokasi Laundry</th>
+                                        <th class="fixed freeze text-center bg-primary" rowspan="2">No. Nota</th>
+                                        <th class="fixed freeze text-center bg-primary" colspan="3" rowspan="1">Tanggal</th>
+                                        <th class="fixed freeze text-center bg-primary" rowspan="2">Nama Pelanggan</th>
+                                        <th class="fixed freeze text-center bg-primary" rowspan="2">Status Pelanggan</th>
+                                        <th class="fixed freeze text-center bg-primary" rowspan="2">NIK</th>
+                                        <th class="fixed freeze_vertical text-center bg-primary" rowspan="2">Jenis Pembayaran</th>
+                                        <th class="fixed freeze_vertical text-center bg-primary" rowspan="2">Jenis Layanan</th>
+                                        <th class="fixed freeze_vertical text-center bg-primary" rowspan="2">Total Berat (Kg)</th>
+                                        <th class="fixed freeze_vertical text-center bg-primary" rowspan="2">Total Biaya (Rp)</th>
+                                        <th class="fixed freeze_vertical text-center bg-primary" rowspan="2">Status Laundry</th>
+                                    </tr>
+                                    <tr class="bg-primary">
+                                        <th class="fixed freeze_vertical text-center bg-primary" colspan="1" rowspan="1">Transaksi /Terima</th>
+                                        <th class="fixed freeze_vertical text-center bg-primary" colspan="1" rowspan="1">Selesai Dikerjakan</th>
+                                        <th class="fixed freeze_vertical text-center bg-primary" colspan="1" rowspan="1">Telah Diambil</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data_approval">
+                                    <?php
+                                    $no = 1;
+                                    if ($getDataApproval) {
+                                        $val_sum_bayar = 0;
+                                        foreach ($getDataApproval as $get) {
+                                            if (is_numeric($get->TotalTagihan)) {
+                                                $val_sum_bayar += $get->TotalTagihan;
+                                            } ?>
+                                            <tr class="odd gradeX">
+                                                <td class="text-center">
+                                                    <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                        <input type="checkbox" class="checkboxes" name="ID[]" value="<?php echo $get->ID; ?>" />
+                                                        <span></span>
+                                                    </label>
+                                                </td>
+                                                <?php foreach ($dt_allpos_laundry as $pos) {
+                                                    if ($get->pos_ldy == $pos->detail_id) { ?>
+                                                        <td style="background-color: <?= ($get->pos_ldy == $pos->detail_id) ? $pos->warna_laundry : $pos->warna_laundry; ?>;"><?= $get->nama_laundry . ' (' . $get->alamat . ')'; ?></td>
+                                                        <?php 
+                                                    }
+                                                } ?>
+                                                <td class="text-center no_nota"><?php echo $get->NoNota ?></td>
+                                                <td class="text-center"><?php echo date('d-m-Y', strtotime($get->TglTransaksi)); ?></td>
+                                                <td class="text-center"><?php if ($get->SelesaiDate != NULL) { echo date('d-m-Y', strtotime($get->SelesaiDate)); } else { echo ''; } ?></td>
+                                                <td class="text-center"><?php if ($get->SelesaiDate != NULL) { echo $get->DiambilDate; } else { echo ''; } ?></td>
+                                                <td class="nama_pelanggan"><?php echo $get->Nama ?></td>
+                                                <td class="text-center st_pelanggan"><?php echo $get->StatusKaryawan ?></td>
+                                                <td class="text-center nik"><?php echo $get->NIK ?></td>
+                                                <td class="jns_bayar"><?php echo $get->JenisPembayaran ?></td>
+                                                <td class="jenis_layanan"><?php echo $get->JenisLayanan ?></td>
+                                                <td class="text-right berat"><?php echo $get->JumlahBerat ?></td>
+                                                <td class="total_biaya text-right"><?php echo number_format($get->TotalTagihan, 0, ',', '.'); ?></td>
+                                                <td class="text-center st_laundry">
+                                                    <?php if ($get->IDStatusPelayanan == 1) {
+                                                        echo '<span class="label label-sm label-danger">' . $get->StatusPelayanan . '</span>';
+                                                    } elseif ($get->IDStatusPelayanan == 2) {
+                                                        echo '<span class="label label-sm label-warning">' . $get->StatusPelayanan . '</span>';
+                                                    } elseif ($get->IDStatusPelayanan == 3) {
+                                                        echo '<span class="label label-sm label-success">' . $get->StatusPelayanan . '</span>';
+                                                    } elseif ($get->IDStatusPelayanan == 4) {
+                                                        echo '<span class="label label-sm label-primary">' . $get->StatusPelayanan . '</span>';
+                                                    } ?>
+                                                </td>
+                                            </tr>
+                                            <?php 
+                                        }
+                                    } else { ?>
+                                        <td class="text-center" colspan="13">Tidak ada data approve</td>
+                                        <?php 
+                                    } ?>
+                                </tbody>
+                                <tfoot id="foot_approval">
+                                    <tr>
+                                        <td colspan="12" style="text-align: center;"><b>TOTAL KESELURUHAN</b></td>
+                                        <td style="text-align: center;"><?php if (isset($val_sum_bayar)) { echo number_format($val_sum_bayar, 0, ',', '.'); } ?></td>
+                                        <td colspan="1"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-lg-2">
+                                    <button type="submit" class="btn btn-sm green">Approve</button>
+                                    <a class="btn btn-sm default" href="javascript:history.back()">Kembali</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--END EXAMPLE TABLE PORTLET-->
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function callAjax() {
+        var periode = $("#periode").val();
+        var bulan = $("#bulan").val();
+        var tahun = $("#tahun").val();
+        var tk_cek = $("input[type='radio']:checked").val();
+
+        if (!periode || bulan == '') {
+            alert('Wajib Pilih Periode');
+        } else {
+            $.ajax({
+                type: "POST",
+                dataType: "html",
+                url: "<?php echo base_url('Approval_laundry/ajaxData') ?>" + "/" + periode + "/" + bulan + "/" + tahun + "/" + tk_cek,
+                success: function(msg) {
+                    if (msg == '') {
+                        alert('Tidak ada data');
+                    } else {
+                        $("#scrolling_table_2").html(msg);
+                    }
+                }
+            });
+        }
+    };
+</script>
+<script type="text/javascript">
+    function callAjaxx() {
+        var periode = $("#periode").val();
+        var bulan = $("#bulan").val();
+        var tahun = $("#tahun").val();
+        var tk_cek = $("input[type='radio']:checked").val();
+
+        if (!periode || bulan == '') {
+            alert('Wajib Pilih Periode');
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "<?php echo base_url('Approval_laundry/ajaxData2') ?>" + "/" + periode + "/" + bulan + "/" + tahun + "/" + tk_cek,
+                data: {
+                    periode: periode,
+                    bulan: bulan,
+                    tahun: tahun,
+                    tk_cek: tk_cek
+                },
+                success: function(html_item) {
+                    var arritem = html_item.split('///');
+                    $('#data_approval').empty();
+                    $('#data_approval').append(arritem[0]);
+                    $('#foot_approval').empty();
+                    $('#foot_approval').append(arritem[1]);
+                }
+            });
+        }
+    };
+</script>
+<script type="text/javascript">
+    function checkAll(ele) {
+        var checkList = document.getElementsByTagName('input');
+
+        if (ele.checked) {
+            for (var i = 0; i < checkList.length; i++) {
+                if (checkList[i].type == 'checkbox') {
+                    checkList[i].checked = true;
+                }
+            }
+        } else {
+            for (var i = 0; i < checkList.length; i++) {
+                console.log(i)
+                if (checkList[i].type == 'checkbox') {
+                    checkList[i].checked = false;
+                }
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+    $('.StatusTK').click(function() {
+        if ($('#karyawan').is(':checked')) {
+            $('.kosong').css('display', 'none');
+            $('.harian').css('display', 'none');
+            $('.karyawan').css('display', 'block');
+            $('#periode').val('bulanan');
+            $('#periode').attr('disabled', false);
+        } else if ($('#harian').is(':checked')) {
+            $('.kosong').css('display', 'none');
+            $('.karyawan').css('display', 'none');
+            $('.harian').css('display', 'block');
+            $('#periode').val('p1');
+            $('#periode').attr('disabled', false);
+        }
+    });
+</script>
