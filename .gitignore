@@ -1,0 +1,67 @@
+# =============================================
+# ENV FILES — jangan pernah push ke github
+# =============================================
+.env
+.env.prod
+.env.staging
+.env.local
+.env.*.local
+
+# =============================================
+# VENDOR — install ulang via composer
+# =============================================
+src/*/vendor/
+
+# =============================================
+# CI3 CACHE & LOG
+# =============================================
+src/*/application/cache/*
+src/*/application/logs/*
+!src/*/application/cache/.gitkeep
+!src/*/application/cache/index.html
+!src/*/application/logs/.gitkeep
+!src/*/application/logs/index.html
+
+# =============================================
+# SESSION FILES
+# =============================================
+src/*/application/cache/sessions/*
+!src/*/application/cache/sessions/.gitkeep
+
+# =============================================
+# UPLOAD FILES
+# =============================================
+src/*/fileUpload/*
+!src/*/fileUpload/.gitkeep
+
+# =============================================
+# DATABASE BACKUP
+# =============================================
+src/*/db/*.sql
+src/*/db/*.bak
+
+# =============================================
+# OS FILES
+# =============================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =============================================
+# IDE
+# =============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =============================================
+# DOCKER — image & volume lokal
+# =============================================
+.docker/
+
+# =============================================
+# COMPOSER LOCK — opsional, tergantung policy
+# Uncomment jika tidak mau lock file ikut push
+# =============================================
+# src/*/composer.lock
