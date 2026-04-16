@@ -1,3 +1,5 @@
+name: elaundry                          # ← tambahkan ini, fix project name
+
 services:
   nginx:
     image: nginx:1.27-alpine
@@ -5,7 +7,7 @@ services:
     ports:
       - "${APP_PORT}:80"
     volumes:
-      - ./src/elaundry:/var/www/html/elaundry  # ← subfolder
+      - ./src/elaundry:/var/www/html/elaundry
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - app83
@@ -16,10 +18,11 @@ services:
     build:
       context: .
       dockerfile: ./docker/php74/Dockerfile
+    image: elaundry-app74               # ← tambahkan ini
     container_name: ${PROJECT_NAME}-php74
     working_dir: /var/www/html/elaundry
     volumes:
-      - ./src/elaundry:/var/www/html/elaundry  # ← subfolder
+      - ./src/elaundry:/var/www/html/elaundry
       - ./docker/php74/php.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
     environment:
       TZ: ${TZ}
@@ -37,10 +40,11 @@ services:
     build:
       context: .
       dockerfile: ./docker/php83/Dockerfile
+    image: elaundry-app83               # ← tambahkan ini
     container_name: ${PROJECT_NAME}-php83
     working_dir: /var/www/html/elaundry
     volumes:
-      - ./src/elaundry:/var/www/html/elaundry  # ← subfolder
+      - ./src/elaundry:/var/www/html/elaundry
       - ./docker/php83/php.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
     environment:
       TZ: ${TZ}
