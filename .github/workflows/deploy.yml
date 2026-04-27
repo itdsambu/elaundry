@@ -1,0 +1,105 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy via SSH + Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # ── 1. Checkout source code ──────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Setup SSH agent ───────────────────────────────────────────────
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # ── 3. Add server ke known_hosts ────────────────────────────────────
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # ── 4. Pull latest code di server ───────────────────────────────────
+      - name: Pull latest code on server
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            git config --global --add safe.directory ${{ secrets.DEPLOY_PATH }}
+            cd ${{ secrets.DEPLOY_PATH }}
+            git pull origin $(git symbolic-ref --short HEAD)
+            echo "✅ Git pull selesai"
+          EOF
+
+      # ── 5. Composer install ──────────────────────────────────────────────
+      - name: Run composer install on server
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd ${{ secrets.DEPLOY_PATH }}/src/elaundry
+            if [ -f composer.json ]; then
+              composer install \
+                --no-dev \
+                --optimize-autoloader \
+                --no-interaction \
+                --prefer-dist
+              echo "✅ Composer install selesai"
+            else
+              echo "⚠️  composer.json tidak ditemukan, skip"
+            fi
+          EOF
+
+      # ── 6. Docker up (sama persis dengan command manual Galung) ─────────
+      - name: Docker compose up
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd ${{ secrets.DEPLOY_PATH }}
+            docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+            echo "✅ Docker compose up selesai"
+          EOF
+
+      # ── 7. Health check ──────────────────────────────────────────────────
+      - name: Health check
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd ${{ secrets.DEPLOY_PATH }}
+            echo "🐳 Status containers:"
+            docker compose -f docker-compose.prod.yml --env-file .env.prod ps
+          EOF
+
+      # ── 8. Notifikasi sukses / gagal ─────────────────────────────────────
+      - name: Notify deploy status
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          COMMIT_MSG=$(echo "${{ github.event.head_commit.message }}" | head -1)
+          ACTOR="${{ github.actor }}"
+          BRANCH="${{ github.ref_name }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          if [ "$STATUS" = "success" ]; then
+            ICON="✅"
+            TEXT="Deploy BERHASIL"
+          else
+            ICON="❌"
+            TEXT="Deploy GAGAL"
+          fi
+
+          echo "$ICON $TEXT"
+          echo "Branch  : $BRANCH"
+          echo "By      : $ACTOR"
+          echo "Commit  : $COMMIT_MSG"
+          echo "Detail  : $RUN_URL"
+
+          # Uncomment untuk notifikasi Telegram:
+          # curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+          #   -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+          #   -d text="$ICON elaundry Deploy%0A%0A$TEXT%0ABranch: $BRANCH%0ABy: $ACTOR%0ACommit: $COMMIT_MSG%0ADetail: $RUN_URL" \
+          #   -d parse_mode="HTML"
